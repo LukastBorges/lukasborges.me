@@ -23,6 +23,21 @@ export const skillGroups: readonly SkillGroup[] = [
     ],
   },
   {
+    id: 'ai',
+    title: 'AI-native engineering',
+    description: 'Agents in the daily workflow, with the context and guardrails to do real work.',
+    skills: [
+      { name: 'Agentic development workflows', usedAt: ['hostfully', 'summary'], core: true },
+      { name: 'Model Context Protocol (MCP)', usedAt: ['hostfully', 'education'], core: true },
+      { name: 'Autonomous agents', usedAt: ['hostfully', 'education'], core: true },
+      { name: 'Prompt engineering', usedAt: ['hostfully', 'education'] },
+      { name: 'Agent skills', usedAt: ['hostfully'] },
+      { name: 'Plan-driven implementation', usedAt: ['hostfully'] },
+      { name: 'Figma, Jira & MUI MCP servers', usedAt: ['hostfully'] },
+      { name: 'LLM fundamentals', usedAt: ['education'] },
+    ],
+  },
+  {
     id: 'architecture',
     title: 'Architecture',
     description: 'Structures that keep large frontends changeable as teams and products grow.',
@@ -39,8 +54,8 @@ export const skillGroups: readonly SkillGroup[] = [
   },
   {
     id: 'quality',
-    title: 'Quality',
-    description: 'Testing and analysis built into the workflow rather than bolted on.',
+    title: 'Quality & delivery',
+    description: 'Testing, analysis, and pipelines built into the workflow rather than bolted on.',
     skills: [
       { name: 'Test pyramid strategy', usedAt: ['hostfully'], core: true },
       { name: 'Vitest', usedAt: ['hostfully'] },
@@ -49,6 +64,9 @@ export const skillGroups: readonly SkillGroup[] = [
       { name: 'Cypress', usedAt: ['hostfully', 'loadsmart'] },
       { name: 'Static analysis (SonarQube, ESLint)', usedAt: ['hostfully', 'cit'] },
       { name: 'Monitoring & observability', usedAt: ['hostfully'] },
+      { name: 'CI/CD', usedAt: ['hostfully', 'cit'] },
+      { name: 'Semantic release', usedAt: ['hostfully'] },
+      { name: 'Git', usedAt: ['cit'] },
     ],
   },
   {
@@ -60,18 +78,7 @@ export const skillGroups: readonly SkillGroup[] = [
       { name: 'amCharts', usedAt: ['cit'] },
       { name: 'Chart.js', usedAt: ['loadsmart'] },
       { name: 'Google Maps Platform', usedAt: ['hostfully', 'loadsmart'] },
-      { name: 'Material UI', usedAt: ['cit'] },
-    ],
-  },
-  {
-    id: 'delivery',
-    title: 'Delivery & automation',
-    description: 'Pipelines and tooling that make shipping routine.',
-    skills: [
-      { name: 'CI/CD', usedAt: ['hostfully', 'cit'] },
-      { name: 'Semantic release', usedAt: ['hostfully'] },
-      { name: 'AI-assisted development workflows', usedAt: ['hostfully', 'summary'], core: true },
-      { name: 'Git', usedAt: ['cit'] },
+      { name: 'Material UI', usedAt: ['hostfully', 'cit'] },
     ],
   },
   {

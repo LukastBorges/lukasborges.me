@@ -23,9 +23,9 @@ export const principles: readonly Principle[] = [
     evidence: ['hostfully', 'loadsmart', 'cit', 'summary'],
   },
   {
-    title: 'Automate the toil',
-    body: 'Put repetitive work — releases, changelogs, checks — into pipelines and AI-assisted tooling so attention goes to the product.',
-    evidence: ['hostfully'],
+    title: 'Plan first, then delegate',
+    body: 'Give agents real context through MCP, a written plan, and reusable skills. Let them take the repetitive work, and keep tests and static analysis as the gate.',
+    evidence: ['hostfully', 'education'],
   },
   {
     title: 'Raise the people around you',

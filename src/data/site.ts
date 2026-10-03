@@ -18,7 +18,7 @@ export const navigation: readonly NavItem[] = [
 
 export const seo = {
   title: `${profile.name} — ${profile.title}`,
-  description: `${profile.name} is a ${profile.title} with ${yearsSince(profile.careerStart)}+ years of experience in React and TypeScript, modernizing product frontends through modular architecture, quality systems, and user-focused interfaces.`,
+  description: `${profile.name} is a ${profile.title} with ${yearsSince(profile.careerStart)}+ years of experience in React and TypeScript, modernizing product frontends through modular architecture, quality systems, AI-native workflows, and user-focused interfaces.`,
   locale: 'en_US',
   ogImage: 'og.png',
   ogImageAlt: `${profile.name} — ${profile.title}`,

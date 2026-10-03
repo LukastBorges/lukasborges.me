@@ -38,6 +38,35 @@ export const projects: readonly Project[] = [
     featured: true,
   },
   {
+    id: 'hostfully-ai-workflow',
+    kind: 'case-study',
+    name: 'AI-native delivery workflow',
+    context: 'Hostfully',
+    summary:
+      'Agents as part of everyday product engineering: grounded in real project context, guided by plans, and held to the same quality bar.',
+    problem:
+      'Bring AI agents into day-to-day frontend work on a production codebase without lowering the architecture and quality standards.',
+    approach: [
+      'Connected agents to the team’s context through MCP servers: Figma for designs, Jira for tickets, MUI for component documentation, and more.',
+      'Wrote reusable skills and engineered prompts so agents follow the project’s conventions.',
+      'Planned work up front, then delegated implementation to autonomous agents.',
+      'Kept tests, static analysis, and semantic releases as the gate every change passes through.',
+    ],
+    contribution: 'Applied daily on the Guidebooks rebuild.',
+    outcomes: [],
+    technologies: [
+      'MCP',
+      'AI agents',
+      'Agent skills',
+      'Prompt engineering',
+      'Figma',
+      'Jira',
+      'MUI',
+    ],
+    links: {},
+    featured: true,
+  },
+  {
     id: 'loadsmart-design-system',
     kind: 'case-study',
     name: 'Design system components',
