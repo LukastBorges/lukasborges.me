@@ -130,7 +130,7 @@ describe('privacy', () => {
 
   it('only publishes the approved email address', () => {
     const emails = new Set(everything.match(/[\w.+-]+@[\w-]+\.[\w.]+/g) ?? []);
-    expect([...emails]).toEqual(['lukasborges@outlook.com']);
+    expect([...emails]).toEqual(['lucas@lukasborges.me']);
   });
 
   it('only uses https links', () => {

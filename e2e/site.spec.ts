@@ -128,6 +128,6 @@ test('works without JavaScript', async ({ browser }) => {
   const page = await context.newPage();
   await page.goto('./');
   await expect(page.getByRole('heading', { name: 'Where I’ve done the work.' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'lukasborges@outlook.com' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'lucas@lukasborges.me' })).toBeVisible();
   await context.close();
 });

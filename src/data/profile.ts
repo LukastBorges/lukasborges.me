@@ -2,7 +2,7 @@ import type { Profile } from '@/types/content';
 
 const LINKEDIN = 'https://www.linkedin.com/in/lukasborges';
 const GITHUB = 'https://github.com/LukastBorges';
-const EMAIL = 'lukasborges@outlook.com';
+const EMAIL = 'lucas@lukasborges.me';
 
 export const profile: Profile = {
   name: 'Lucas Borges',
