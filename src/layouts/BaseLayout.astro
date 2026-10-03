@@ -55,7 +55,7 @@ const jsonLd = JSON.stringify(profilePageSchema(canonical, profileImageUrl)).rep
 
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="canonical" href={canonical} />}
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="author" content={profile.name} />
     <meta name="theme-color" content="#121317" />
@@ -86,7 +86,8 @@ const jsonLd = JSON.stringify(profilePageSchema(canonical, profileImageUrl)).rep
     <Font cssVariable="--font-sans" preload />
     <Font cssVariable="--font-mono" />
 
-    <script type="application/ld+json" is:inline set:html={jsonLd} />
+    {/* Error pages are not indexable: no canonical URL or profile structured data. */}
+    {!noindex && <script type="application/ld+json" is:inline set:html={jsonLd} />}
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

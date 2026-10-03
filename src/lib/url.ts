@@ -1,4 +1,4 @@
-/** Prefixes a site-relative path with the configured base (e.g. `/lukasborges.me/`). */
+/** Prefixes a site-relative path with the configured base (`/`, or e.g. `/lukasborges.me/`). */
 export function withBase(path = ''): string {
   const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
   return `${base}${path.replace(/^\//, '')}`;

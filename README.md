@@ -2,7 +2,7 @@
 
 Personal website of **Lucas Borges**, Senior Frontend Engineer.
 
-**Live:** https://lukastborges.github.io/lukasborges.me/
+**Live:** https://lukasborges.me
 
 A static, single-page portfolio built with Astro and TypeScript. It ships no framework runtime: the
 interactive parts are a few kilobytes of vanilla TypeScript, and every page works without JavaScript.
@@ -31,7 +31,7 @@ Requires Node 24 (see `.nvmrc`) and pnpm 11.
 
 ```bash
 pnpm install    # also installs the git hooks
-pnpm dev        # http://localhost:4321/lukasborges.me/
+pnpm dev        # http://localhost:4321/
 ```
 
 | Script            | What it does                                              |
@@ -109,15 +109,25 @@ releasable commits. Pull after a release, since it pushes a commit to `main`.
 In the repository, go to **Settings → Pages → Build and deployment** and set **Source** to
 **GitHub Actions**.
 
-### Moving to a custom domain
+### Custom domain
 
-The base path is configured in `astro.config.ts` and can be overridden with environment variables.
-To serve from `https://lukasborges.me`:
+The site is served from `https://lukasborges.me`. The URL and base path are set in
+`astro.config.ts` and can be overridden with `SITE_URL` and `BASE_PATH`, for example to build for the
+GitHub Pages project URL.
 
-1. Add `public/CNAME` containing `lukasborges.me`.
-2. In the workflow, set `SITE_URL=https://lukasborges.me` and `BASE_PATH=/` as `env` on the build
-   and e2e steps. Or change the defaults in `astro.config.ts` and `playwright.config.ts`.
-3. Configure the domain's DNS and set the custom domain under **Settings → Pages**.
+The domain is configured in GitHub, not in the repository. Pages deploys through Actions, so GitHub
+ignores any `CNAME` file.
+
+1. Go to **Settings → Pages → Custom domain**, enter `lukasborges.me`, then turn on
+   **Enforce HTTPS** once the certificate is issued.
+2. Set these DNS records at the registrar:
+   - `A` records for `@`: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`,
+     `185.199.111.153`
+   - `AAAA` records for `@`: `2606:50c0:8000::153`, `2606:50c0:8001::153`,
+     `2606:50c0:8002::153`, `2606:50c0:8003::153`
+   - `CNAME` for `www` pointing to `lukastborges.github.io`
+3. Optionally, verify the domain under **GitHub profile settings → Pages** to prevent takeover.
+
 
 ## Commit conventions
 

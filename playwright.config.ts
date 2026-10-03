@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 // Dedicated port so tests never collide with a running `astro dev` (4321).
 const PORT = 4329;
-const BASE_PATH = process.env.BASE_PATH ?? '/lukasborges.me';
+const BASE_PATH = process.env.BASE_PATH ?? '/';
 
 export default defineConfig({
   testDir: 'e2e',

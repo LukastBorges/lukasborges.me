@@ -2,12 +2,12 @@ import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
 
 /**
- * Deployment target. Defaults to the GitHub Pages project URL.
- * To move to a custom domain, set SITE_URL=https://lukasborges.me and BASE_PATH=/
- * (and add public/CNAME) — no source changes required.
+ * Deployment target: the custom domain, served from the root.
+ * Override with SITE_URL / BASE_PATH to build for another host, e.g. the GitHub Pages
+ * project URL (SITE_URL=https://lukastborges.github.io BASE_PATH=/lukasborges.me).
  */
-const site = process.env.SITE_URL ?? 'https://lukastborges.github.io';
-const base = process.env.BASE_PATH ?? '/lukasborges.me';
+const site = process.env.SITE_URL ?? 'https://lukasborges.me';
+const base = process.env.BASE_PATH ?? '/';
 
 /** Latin subset covers English and Portuguese; keeps a single woff2 per family. */
 const LATIN_RANGE =
