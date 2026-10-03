@@ -94,11 +94,15 @@ Every push to `main` runs [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 
 1. **Validate:** install, lint, type check, unit tests, build, then Playwright and axe tests.
 2. **Deploy:** publish `dist/` to GitHub Pages.
-3. **Release:** semantic-release reads the commits since the last tag. It bumps the version, updates
-   `CHANGELOG.md`, tags the release and publishes GitHub release notes.
+3. **Release:** semantic-release reads the commits since the last tag and decides the next version.
+   It sets `package.json` `"version"` to that version, updates `CHANGELOG.md`, commits both back
+   to `main` as `chore(release): vX.Y.Z`, tags `vX.Y.Z` and publishes GitHub release notes. The tag
+   and the `package.json` version always come from the same run. See
+   [`release.config.js`](release.config.js).
 
 Pull requests run the validate job only. The workflow also runs on the 1st of each month and can be
-started manually from the Actions tab.
+started manually from the Actions tab. Release runs on those too, and does nothing when there are no
+releasable commits. Pull after a release, since it pushes a commit to `main`.
 
 ### One-time GitHub setup
 

@@ -84,7 +84,8 @@ jobs:
   release:
     name: Semantic release
     needs: deploy
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Push, manual and scheduled runs on main. With no releasable commits it exits as a no-op.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write
