@@ -1,0 +1,54 @@
+{
+  "name": "lukasborges.me",
+  "description": "Personal website of Lucas Borges, Senior Frontend Engineer.",
+  "version": "0.0.0-development",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Lucas Borges",
+    "url": "https://github.com/LukastBorges"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LukastBorges/lukasborges.me.git"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "validate": "pnpm lint && pnpm check && pnpm test && pnpm build",
+    "release": "semantic-release"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@biomejs/biome": "2.5.15",
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
+    "@playwright/test": "^1.63.0",
+    "@semantic-release/changelog": "^7.0.0",
+    "@semantic-release/git": "^11.0.1",
+    "@types/node": "^26.6.4",
+    "conventional-changelog-conventionalcommits": "^10.4.0",
+    "lefthook": "^2.1.16",
+    "semantic-release": "^25.0.9",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.3"
+  }
+}
