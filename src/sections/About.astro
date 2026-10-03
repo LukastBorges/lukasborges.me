@@ -1,0 +1,167 @@
+---
+import { Image } from 'astro:assets';
+import avatar from '@/assets/avatar.png';
+import SectionHeader from '@/components/SectionHeader.astro';
+import { profile } from '@/data/profile';
+import { yearsSince } from '@/lib/dates';
+
+const years = yearsSince(profile.careerStart);
+const [lead, ...paragraphs] = profile.summary;
+---
+
+<section class="section about" id="about" aria-labelledby="about-title">
+  <div class="container">
+    <SectionHeader
+      index={1}
+      label="About"
+      id="about-title"
+      title={`${years} years of frontend, from consultancy to product.`}
+    />
+
+    <div class="about__grid">
+      <div class="about__body">
+        {lead && (
+          <p class="about__lead" data-reveal>
+            {lead}
+          </p>
+        )}
+        {paragraphs.map((paragraph, i) => (
+          <p data-reveal style={`--i: ${i + 1}`}>
+            {paragraph}
+          </p>
+        ))}
+      </div>
+
+      <aside class="about__aside" aria-label="Quick facts" data-reveal style="--i: 2">
+        <div class="about__card">
+          <div class="about__identity">
+            <Image
+              src={avatar}
+              alt={`Illustrated avatar of ${profile.name}`}
+              width={64}
+              height={64}
+              densities={[1, 2]}
+              class="about__avatar"
+            />
+            <div>
+              <p class="about__name">{profile.name}</p>
+              <p class="about__title">{profile.title}</p>
+            </div>
+          </div>
+          <dl class="about__facts">
+            <div>
+              <dt class="eyebrow">Based in</dt>
+              <dd>
+                {profile.location.city}, {profile.location.region}, {profile.location.country}
+              </dd>
+            </div>
+            <div>
+              <dt class="eyebrow">Works</dt>
+              <dd>Remote, overlapping with US time zones</dd>
+            </div>
+            <div>
+              <dt class="eyebrow">Languages</dt>
+              <dd>
+                <ul role="list" class="about__languages">
+                  {profile.languages.map((language) => (
+                    <li>
+                      {language.name} <span>{language.proficiency}</span>
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    gap: var(--space-7);
+  }
+
+  .about__body {
+    display: grid;
+    gap: var(--space-5);
+    max-width: 42rem;
+    color: var(--text-muted);
+    font-size: var(--text-md);
+  }
+
+  .about__lead {
+    color: var(--text);
+    font-size: var(--text-lg);
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+  }
+
+  .about__card {
+    display: grid;
+    gap: var(--space-6);
+    padding: var(--space-6);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+
+  .about__identity {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .about__avatar {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--border-strong);
+  }
+
+  .about__name {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .about__title {
+    color: var(--text-subtle);
+    font-size: var(--text-sm);
+  }
+
+  .about__facts {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .about__facts dd {
+    margin-top: var(--space-1);
+  }
+
+  .about__languages {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .about__languages span {
+    color: var(--text-subtle);
+    font-size: var(--text-sm);
+  }
+
+  @media (min-width: 60rem) {
+    .about__grid {
+      grid-template-columns: minmax(0, 1fr) 20rem;
+      gap: var(--space-9);
+      align-items: start;
+    }
+
+    .about__aside {
+      position: sticky;
+      top: calc(var(--nav-height) + var(--space-6));
+    }
+  }
+</style>

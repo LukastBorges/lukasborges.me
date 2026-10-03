@@ -1,0 +1,371 @@
+---
+import { Image } from 'astro:assets';
+import avatar from '@/assets/avatar.png';
+import Button from '@/components/Button.astro';
+import Icon from '@/components/Icon.astro';
+import { experience } from '@/data/experience';
+import { getFacts } from '@/data/facts';
+import { profile } from '@/data/profile';
+
+const current = experience.find((entry) => entry.roles.some((role) => !role.period.end));
+const facts = getFacts();
+
+// The headline's first clause is set in full contrast; the rest recedes.
+const [lead = profile.headline, rest = ''] = profile.headline.split(/\s—\s/);
+const words = (text: string) => text.split(' ');
+// Keep the em dash on the same line as the word before it.
+const leadWords = words(`${lead}\u00a0—`);
+const restWords = words(rest);
+const linkedin = profile.socials.find((s) => s.id === 'linkedin');
+const github = profile.socials.find((s) => s.id === 'github');
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title" data-hero>
+  <canvas class="hero__graph" aria-hidden="true" data-hero-graph></canvas>
+  <div class="hero__glow" aria-hidden="true"></div>
+
+  <div class="container hero__inner">
+    {current && (
+      <p class="hero__status" data-enter style="--i: 0">
+        <span class="hero__pulse" aria-hidden="true" />
+        <span>
+          Currently at <strong>{current.company.name}</strong>
+        </span>
+      </p>
+    )}
+
+    <h1 id="hero-title" class="hero__title" data-enter style="--i: 1">
+      <Image
+        src={avatar}
+        alt=""
+        width={40}
+        height={40}
+        densities={[1, 2]}
+        loading="eager"
+        class="hero__avatar"
+      />
+      <span class="hero__name">{profile.name}</span>
+      <span class="hero__role">{profile.title}</span>
+    </h1>
+
+    <p class="hero__headline">
+      {leadWords.map((word, i) => (
+        <span class="hero__word" data-enter style={`--i: ${2 + i * 0.35}`}>
+          {word}{' '}
+        </span>
+      ))}
+      {restWords.map((word, i) => (
+        <span
+          class="hero__word hero__word--muted"
+          data-enter
+          style={`--i: ${2 + (leadWords.length + i) * 0.35}`}
+        >
+          {word}{' '}
+        </span>
+      ))}
+    </p>
+
+    <p class="hero__intro" data-enter style="--i: 6">{profile.intro}</p>
+
+    <div class="hero__actions" data-enter style="--i: 7">
+      <Button href="#experience" icon="arrow-down">View experience</Button>
+      <Button href="#work" variant="secondary">Selected work</Button>
+      <div class="hero__socials">
+        {linkedin && (
+          <a class="hero__social" href={linkedin.href} rel="me" aria-label="LinkedIn profile">
+            <Icon name="linkedin" />
+          </a>
+        )}
+        {github && (
+          <a class="hero__social" href={github.href} rel="me" aria-label="GitHub profile">
+            <Icon name="github" />
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <dl class="facts" data-enter style="--i: 9">
+      {facts.map((fact) => (
+        <div class="facts__item">
+          <dt class="facts__label">
+            {fact.label}
+            {fact.timeZone && (
+              <time class="facts__time" data-local-time data-time-zone={fact.timeZone} />
+            )}
+          </dt>
+          <dd class="facts__value">{fact.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<script>
+  import { initHeroGraph } from '@/scripts/hero-graph';
+
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-hero-graph]');
+  if (hero && canvas) initHeroGraph(canvas, hero);
+
+  // Local time in Belo Horizonte, refreshed each minute. Hidden entirely without JS.
+  const time = document.querySelector<HTMLTimeElement>('[data-local-time]');
+  if (time?.dataset.timeZone) {
+    const format = new Intl.DateTimeFormat('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: time.dataset.timeZone,
+    });
+    const tick = () => {
+      const now = new Date();
+      time.textContent = ` · ${format.format(now)} local`;
+      time.dateTime = now.toISOString();
+    };
+    tick();
+    setInterval(tick, 30_000);
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--space-7);
+    min-height: 100svh;
+    padding-top: calc(var(--nav-height) + var(--space-8));
+    padding-bottom: var(--space-6);
+    overflow: hidden;
+  }
+
+  .hero__graph {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    opacity: 0.6;
+    mask-image: radial-gradient(ellipse 70% 70% at 70% 35%, #000 20%, transparent 75%);
+  }
+
+  .hero__glow {
+    position: absolute;
+    z-index: -2;
+    top: -20%;
+    right: -10%;
+    width: min(60rem, 90vw);
+    aspect-ratio: 1;
+    background: radial-gradient(circle, var(--glow), transparent 60%);
+    pointer-events: none;
+  }
+
+  @media (min-width: 60rem) {
+    .hero__graph {
+      opacity: 1;
+    }
+  }
+
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .hero__graph,
+      .hero__glow {
+        animation: hero-parallax linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 100svh;
+      }
+    }
+  }
+
+  @keyframes hero-parallax {
+    to {
+      transform: translate3d(0, 18svh, 0);
+      opacity: 0.2;
+    }
+  }
+
+  .hero__inner {
+    display: grid;
+    gap: var(--space-5);
+    justify-items: start;
+  }
+
+  .hero__status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3) var(--space-1) var(--space-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    backdrop-filter: blur(8px);
+  }
+
+  .hero__status strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .hero__pulse {
+    position: relative;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-inline: var(--space-1);
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__pulse::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: var(--accent);
+      animation: pulse 2.4s var(--ease-out) 1.2s 3;
+    }
+  }
+
+  @keyframes pulse {
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+
+  .hero__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-3);
+    margin-top: var(--space-4);
+    font-size: var(--text-md);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .hero__avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--border-strong);
+  }
+
+  .hero__role {
+    color: var(--text-subtle);
+    font-weight: 400;
+  }
+
+  .hero__role::before {
+    content: '/';
+    margin-right: var(--space-3);
+    color: var(--border-strong);
+  }
+
+  .hero__headline {
+    max-width: 21ch;
+    font-size: var(--text-display);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: var(--tracking-tight);
+    text-wrap: balance;
+  }
+
+  .hero__word {
+    display: inline-block;
+    white-space: pre;
+  }
+
+  .hero__word--muted {
+    color: var(--text-subtle);
+  }
+
+  .hero__intro {
+    max-width: 36rem;
+    color: var(--text-muted);
+    font-size: var(--text-md);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+
+  .hero__socials {
+    display: flex;
+    gap: var(--space-1);
+    margin-left: var(--space-1);
+  }
+
+  .hero__social {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-full);
+    color: var(--text-muted);
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .hero__social:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--border);
+  }
+
+  .facts__item {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--space-1);
+    padding: var(--space-5) var(--space-4) var(--space-2) 0;
+  }
+
+  .facts__item:nth-child(n + 3) {
+    border-top: 1px solid var(--border);
+  }
+
+  .facts__value {
+    font-size: var(--text-lg);
+    font-weight: 500;
+    letter-spacing: var(--tracking-snug);
+  }
+
+  .facts__label {
+    color: var(--text-subtle);
+    font-size: var(--text-sm);
+  }
+
+  .facts__time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (min-width: 60rem) {
+    .facts {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .facts__item:nth-child(n + 3) {
+      border-top: 0;
+    }
+
+    .facts__item + .facts__item {
+      padding-left: var(--space-5);
+      border-left: 1px solid var(--border);
+    }
+  }
+</style>

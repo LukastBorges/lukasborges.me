@@ -1,0 +1,218 @@
+---
+import Icon from '@/components/Icon.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import Tag from '@/components/Tag.astro';
+import { certifications, courses, education, honors } from '@/data/education';
+import { formatYearSpan, isOngoing } from '@/lib/dates';
+---
+
+<section class="section education" id="education" aria-labelledby="education-title">
+  <div class="container">
+    <SectionHeader
+      index={5}
+      label="Education & learning"
+      id="education-title"
+      title="An engineer by training, still studying."
+    />
+
+    <div class="education__grid">
+      <ol role="list" class="degrees">
+        {education.map((entry, i) => (
+          <li class="degree" data-reveal style={`--i: ${i}`}>
+            <p class="degree__period mono">{formatYearSpan(entry.period)}</p>
+            <div class="degree__body">
+              <h3 class="degree__credential">
+                {entry.credential}, {entry.field}
+              </h3>
+              <p class="degree__institution">
+                {entry.institution}
+                {entry.shortName && <span class="degree__short"> · {entry.shortName}</span>}
+              </p>
+              {(isOngoing(entry.period) || entry.note) && (
+                <p class="degree__tags">
+                  {isOngoing(entry.period) && <Tag tone="accent">In progress</Tag>}
+                  {entry.note && <Tag>{entry.note}</Tag>}
+                </p>
+              )}
+              {entry.description && <p class="degree__description">{entry.description}</p>}
+              {entry.topics && (
+                <ul role="list" class="degree__topics" aria-label="Curriculum">
+                  {entry.topics.map((topic) => (
+                    <li>
+                      <Tag tone="outline">{topic}</Tag>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {entry.url && (
+                <a class="degree__link" href={entry.url}>
+                  About the program <Icon name="arrow-up-right" size={14} />
+                </a>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div class="education__aside">
+        {certifications.length > 0 && (
+          <div class="panel" data-reveal>
+            <h3 class="eyebrow">Certifications</h3>
+            <ul role="list" class="panel__list">
+              {certifications.map((cert) => (
+                <li>
+                  {cert.url ? <a href={cert.url}>{cert.name}</a> : cert.name}
+                  {cert.issuer && <span> · {cert.issuer}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {courses.length > 0 && (
+          <div class="panel" data-reveal>
+            <h3 class="eyebrow">Courses</h3>
+            <ul role="list" class="panel__list">
+              {courses.map((course) => (
+                <li>
+                  {course.url ? <a href={course.url}>{course.name}</a> : course.name}
+                  <span> · {course.provider}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {honors.length > 0 && (
+          <div class="panel" data-reveal style="--i: 1">
+            <h3 class="eyebrow">Honors</h3>
+            <ul role="list" class="panel__list">
+              {honors.map((honor) => (
+                <li>
+                  {honor.title}
+                  {honor.context && <span> · {honor.context}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .education__grid {
+    display: grid;
+    gap: var(--space-7);
+  }
+
+  .degree {
+    display: grid;
+    gap: var(--space-2);
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--border);
+  }
+
+  .degree:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .degree__period {
+    color: var(--text-subtle);
+    font-size: var(--text-xs);
+    padding-top: 0.2rem;
+  }
+
+  .degree__body {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .degree__credential {
+    font-size: var(--text-md);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .degree__institution {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .degree__short {
+    color: var(--text-subtle);
+  }
+
+  .degree__description {
+    max-width: 38rem;
+    margin-top: var(--space-2);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .degree__topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  .degree__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    justify-self: start;
+    margin-top: var(--space-2);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .degree__link:hover {
+    color: var(--text);
+  }
+
+  .degree__tags {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  .education__aside {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+
+  .panel {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+
+  .panel__list {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .panel__list span {
+    color: var(--text-subtle);
+  }
+
+  @media (min-width: 48rem) {
+    .degree {
+      grid-template-columns: 8rem minmax(0, 1fr);
+      gap: var(--space-5);
+    }
+  }
+
+  @media (min-width: 60rem) {
+    .education__grid {
+      grid-template-columns: minmax(0, 1fr) 22rem;
+      gap: var(--space-8);
+    }
+  }
+</style>

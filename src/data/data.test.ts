@@ -12,7 +12,8 @@ import { skillGroups } from './skills';
 
 const OCT_2026 = new Date(Date.UTC(2026, 9, 3));
 const companyIds = new Set(experience.map((entry) => entry.company.id));
-const isKnownEvidence = (id: Evidence) => id === 'summary' || companyIds.has(id);
+const isKnownEvidence = (id: Evidence) =>
+  id === 'summary' || id === 'education' || companyIds.has(id);
 
 function expectValidPeriod(period: Period) {
   expect(() => parseYearMonth(period.start)).not.toThrow();
@@ -78,7 +79,7 @@ describe('projects', () => {
   it('has unique ids, valid periods and https links', () => {
     expect(new Set(projects.map((p) => p.id)).size).toBe(projects.length);
     for (const project of projects) {
-      expectValidPeriod(project.period);
+      if (project.period) expectValidPeriod(project.period);
       for (const href of Object.values(project.links)) expect(href).toMatch(/^https:\/\//);
     }
   });

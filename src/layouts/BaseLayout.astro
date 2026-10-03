@@ -1,0 +1,116 @@
+---
+import { Font, getImage } from 'astro:assets';
+import avatar from '@/assets/avatar.png';
+import { profile } from '@/data/profile';
+import { seo } from '@/data/site';
+import { profilePageSchema } from '@/lib/structured-data';
+import { absoluteUrl, withBase } from '@/lib/url';
+import '@/styles/tokens.css';
+import '@/styles/base.css';
+import '@/styles/motion.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Site-relative path of the page, used for the canonical URL. */
+  path?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = seo.title,
+  description = seo.description,
+  path = '',
+  noindex = false,
+} = Astro.props;
+
+const canonical = absoluteUrl(path, Astro.site);
+const ogImage = absoluteUrl(seo.ogImage, Astro.site);
+const profileImage = await getImage({ src: avatar, width: 512, format: 'webp' });
+const profileImageUrl = new URL(profileImage.src, Astro.site).href;
+// Escape "<" so JSON content can never close the script element.
+const jsonLd = JSON.stringify(profilePageSchema(canonical, profileImageUrl)).replace(
+  /</g,
+  '\\u003c',
+);
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script is:inline>
+      // Runs before paint: enable JS-only styles and apply the saved theme (dark by default).
+      (() => {
+        const root = document.documentElement;
+        root.classList.add('js');
+        let theme = null;
+        try {
+          theme = localStorage.getItem('theme');
+        } catch {}
+        root.dataset.theme = theme === 'light' ? 'light' : 'dark';
+      })();
+    </script>
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="author" content={profile.name} />
+    <meta name="theme-color" content="#121317" />
+    <meta name="color-scheme" content="dark light" />
+
+    <link rel="icon" href={withBase('favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={withBase('apple-touch-icon.png')} />
+    <link rel="sitemap" href={withBase('sitemap-index.xml')} />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={profile.name} />
+    <meta property="og:locale" content={seo.locale} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={seo.ogImageAlt} />
+    <meta property="profile:first_name" content="Lucas" />
+    <meta property="profile:last_name" content="Borges" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={seo.ogImageAlt} />
+
+    <Font cssVariable="--font-sans" preload />
+    <Font cssVariable="--font-mono" />
+
+    <script type="application/ld+json" is:inline set:html={jsonLd} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: fixed;
+    top: var(--space-3);
+    left: var(--space-3);
+    z-index: 100;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    background: var(--accent);
+    color: var(--accent-contrast);
+    font-weight: 500;
+    text-decoration: none;
+    transform: translateY(-200%);
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .skip-link:focus-visible {
+    transform: none;
+  }
+</style>

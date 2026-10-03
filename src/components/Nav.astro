@@ -1,0 +1,313 @@
+---
+import { profile } from '@/data/profile';
+import { navigation } from '@/data/site';
+import Icon from './Icon.astro';
+---
+
+<header class="nav" data-nav>
+  <div class="nav__bar">
+    <a class="nav__brand" href="#top">
+      <span class="nav__mark mono" aria-hidden="true">{profile.initials}</span>
+      <span class="nav__name">{profile.name}</span>
+      <span class="visually-hidden">{' '}— back to top</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      <span class="nav__indicator" data-nav-indicator aria-hidden="true"></span>
+      <ul role="list">
+        {navigation.map((item) => (
+          <li>
+            <a class="nav__link" href={`#${item.id}`} data-nav-link>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="nav__actions">
+      <button
+        class="nav__icon-button"
+        type="button"
+        data-theme-toggle
+        aria-label="Toggle color theme"
+      >
+        <Icon name="sun" class="nav__sun" />
+        <Icon name="moon" class="nav__moon" />
+      </button>
+      <button
+        class="nav__icon-button nav__menu-button"
+        type="button"
+        popovertarget="nav-menu"
+        aria-label="Open menu"
+      >
+        <Icon name="menu" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<div id="nav-menu" class="menu" popover data-nav-menu>
+  <div class="menu__top">
+    <span class="eyebrow">Menu</span>
+    <button
+      class="nav__icon-button"
+      type="button"
+      popovertarget="nav-menu"
+      popovertargetaction="hide"
+      aria-label="Close menu"
+    >
+      <Icon name="x" />
+    </button>
+  </div>
+  <nav aria-label="Mobile">
+    <ul role="list" class="menu__list">
+      {navigation.map((item, i) => (
+        <li style={`--i: ${i}`}>
+          <a class="menu__link" href={`#${item.id}`} data-nav-link>
+            <span class="mono menu__index">{String(i + 1).padStart(2, '0')}</span>
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</div>
+
+<script>
+  import { initNav } from '@/scripts/nav';
+  import { toggleTheme } from '@/scripts/theme';
+
+  const header = document.querySelector<HTMLElement>('[data-nav]');
+  if (header) initNav(header);
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]')) {
+    button.addEventListener('click', () => toggleTheme(button));
+  }
+</script>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    padding: var(--space-3) var(--gutter);
+    pointer-events: none;
+  }
+
+  .nav__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    max-width: var(--container);
+    height: 3.25rem;
+    margin-inline: auto;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--radius-full);
+    pointer-events: auto;
+    transition:
+      max-width var(--duration-slow) var(--ease-out),
+      padding var(--duration-slow) var(--ease-out),
+      background-color var(--duration-base) var(--ease-out),
+      border-color var(--duration-base) var(--ease-out),
+      box-shadow var(--duration-base) var(--ease-out);
+  }
+
+  .nav[data-scrolled] .nav__bar {
+    max-width: 58rem;
+    padding: 0 var(--space-2) 0 var(--space-3);
+    background: var(--nav-bg);
+    border-color: var(--border);
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  }
+
+  .nav__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-decoration: none;
+    border-radius: var(--radius-full);
+  }
+
+  .nav__mark {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.625rem;
+    background: var(--text);
+    color: var(--bg);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .nav__name {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .nav__links {
+    position: relative;
+    display: none;
+  }
+
+  .nav__links ul {
+    display: flex;
+    gap: var(--space-1);
+  }
+
+  .nav__link {
+    position: relative;
+    z-index: 1;
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-full);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .nav__link:hover,
+  .nav__link[aria-current] {
+    color: var(--text);
+  }
+
+  .nav__indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--w, 0);
+    height: 100%;
+    border-radius: var(--radius-full);
+    background: var(--surface-hover);
+    border: 1px solid var(--border);
+    opacity: 0;
+    transform: translateX(var(--x, 0));
+    transition:
+      transform var(--duration-base) var(--ease-out),
+      width var(--duration-base) var(--ease-out),
+      opacity var(--duration-base) var(--ease-out);
+  }
+
+  .nav__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .nav__icon-button {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-full);
+    color: var(--text-muted);
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .nav__icon-button:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+  }
+
+  :global([data-theme='dark']) .nav__icon-button :global(.nav__moon),
+  :global([data-theme='light']) .nav__icon-button :global(.nav__sun) {
+    display: none;
+  }
+
+  @media (min-width: 60rem) {
+    .nav__links {
+      display: block;
+    }
+
+    .nav__menu-button {
+      display: none;
+    }
+  }
+
+  /* Mobile menu (popover: top layer, Esc and light-dismiss built in). */
+  .menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: var(--space-4) var(--gutter) var(--space-7);
+    border: 0;
+    background: var(--bg);
+    color: var(--text);
+    opacity: 0;
+    transform: translateY(-0.5rem);
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      transform var(--duration-base) var(--ease-out),
+      overlay var(--duration-base) allow-discrete,
+      display var(--duration-base) allow-discrete;
+  }
+
+  .menu:popover-open {
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transform: none;
+  }
+
+  @starting-style {
+    .menu:popover-open {
+      opacity: 0;
+      transform: translateY(-0.5rem);
+    }
+  }
+
+  .menu__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 3.25rem;
+    margin-bottom: var(--space-7);
+  }
+
+  .menu__list {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .menu__link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    letter-spacing: var(--tracking-snug);
+    text-decoration: none;
+  }
+
+  .menu__link[aria-current] {
+    color: var(--accent);
+  }
+
+  .menu__index {
+    font-size: var(--text-xs);
+    color: var(--text-subtle);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .menu:popover-open li {
+      animation: enter var(--duration-slow) var(--ease-out) both;
+      animation-delay: calc(var(--i) * 40ms + 80ms);
+    }
+  }
+</style>

@@ -1,0 +1,98 @@
+/*
+ * Design tokens. Dark is the primary theme; light is a warm paper variant.
+ * Contrast (WCAG): text ≥ 16:1, muted ≥ 7.4:1, subtle ≥ 5.3:1, accent ≥ 4.7:1 in both themes;
+ * accent-strong on accent-muted ≥ 5.5:1.
+ */
+@layer tokens {
+  :root {
+    color-scheme: dark;
+
+    /* Color */
+    --bg: oklch(0.165 0.006 265);
+    --bg-elevated: oklch(0.205 0.008 265);
+    --surface: oklch(0.22 0.008 265 / 0.55);
+    --surface-hover: oklch(0.25 0.009 265 / 0.7);
+    --border: oklch(1 0 0 / 0.08);
+    --border-strong: oklch(1 0 0 / 0.15);
+    --text: oklch(0.965 0.003 265);
+    --text-muted: oklch(0.74 0.01 265);
+    --text-subtle: oklch(0.64 0.012 265);
+    --accent: oklch(0.81 0.12 62);
+    --accent-muted: oklch(0.81 0.12 62 / 0.14);
+    /* Accent for small text on tinted (accent-muted) backgrounds. */
+    --accent-strong: oklch(0.81 0.12 62);
+    --accent-contrast: oklch(0.2 0.03 60);
+    --glow: oklch(0.81 0.12 62 / 0.16);
+    --shadow-color: 0 0% 0%;
+    --nav-bg: oklch(0.165 0.006 265 / 0.72);
+
+    /* Typography — --font-sans / --font-mono are defined by Astro's <Font> (see astro.config.ts) */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-md: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+    --text-lg: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+    --text-xl: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
+    --text-2xl: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
+    --text-display: clamp(2.25rem, 1.25rem + 3.2vw, 4.25rem);
+    --tracking-tight: -0.035em;
+    --tracking-snug: -0.02em;
+    --tracking-wide: 0.08em;
+
+    /* Space (4px base) */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+    --space-9: 6rem;
+    --space-section: clamp(5rem, 3.5rem + 7vw, 10rem);
+
+    /* Layout */
+    --container: 76rem;
+    --gutter: clamp(1.25rem, 0.75rem + 2.5vw, 3rem);
+    --nav-height: 4rem;
+
+    /* Shape */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.875rem;
+    --radius-lg: 1.25rem;
+    --radius-full: 999px;
+    --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.2);
+    --shadow-md:
+      0 1px 2px hsl(var(--shadow-color) / 0.2), 0 8px 24px -8px hsl(var(--shadow-color) / 0.45);
+    --shadow-lg:
+      0 1px 2px hsl(var(--shadow-color) / 0.2), 0 24px 64px -24px hsl(var(--shadow-color) / 0.6);
+
+    /* Motion */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --duration-fast: 160ms;
+    --duration-base: 280ms;
+    --duration-slow: 640ms;
+  }
+
+  :root[data-theme='light'] {
+    color-scheme: light;
+
+    --bg: oklch(0.985 0.003 85);
+    --bg-elevated: oklch(1 0 0);
+    --surface: oklch(1 0 0 / 0.7);
+    --surface-hover: oklch(1 0 0 / 0.95);
+    --border: oklch(0.22 0.01 265 / 0.09);
+    --border-strong: oklch(0.22 0.01 265 / 0.16);
+    --text: oklch(0.22 0.01 265);
+    --text-muted: oklch(0.44 0.012 265);
+    --text-subtle: oklch(0.5 0.012 265);
+    --accent: oklch(0.56 0.15 45);
+    --accent-muted: oklch(0.56 0.15 45 / 0.1);
+    --accent-strong: oklch(0.48 0.15 45);
+    --accent-contrast: oklch(1 0 0);
+    --glow: oklch(0.7 0.14 55 / 0.14);
+    --shadow-color: 30 20% 30%;
+    --nav-bg: oklch(0.985 0.003 85 / 0.75);
+  }
+}

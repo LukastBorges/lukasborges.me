@@ -1,0 +1,35 @@
+---
+import Button from '@/components/Button.astro';
+import { profile } from '@/data/profile';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/url';
+---
+
+<BaseLayout title={`Page not found — ${profile.name}`} path="404" noindex>
+  <main id="main" class="not-found container">
+    <p class="eyebrow">404</p>
+    <h1 class="not-found__title">This page doesn’t exist.</h1>
+    <p class="not-found__lead">The link may be outdated, or the address may have a typo.</p>
+    <Button href={withBase()} icon="arrow-right">Back to the homepage</Button>
+  </main>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: var(--space-5);
+    min-height: 100svh;
+  }
+
+  .not-found__title {
+    font-size: var(--text-2xl);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .not-found__lead {
+    color: var(--text-muted);
+    font-size: var(--text-md);
+  }
+</style>

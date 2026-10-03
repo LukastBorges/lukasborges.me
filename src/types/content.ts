@@ -45,6 +45,8 @@ export interface SpokenLanguage {
 export interface Fact {
   value: string;
   label: string;
+  /** IANA time zone; when set, the UI appends the live local time to the label. */
+  timeZone?: string;
 }
 
 export interface Profile {
@@ -79,10 +81,10 @@ export interface Profile {
 export type CompanyId = 'hostfully' | 'loadsmart' | 'cit';
 
 /**
- * Where a claim comes from: a company in `experience.ts`, or the LinkedIn summary for
- * cross-cutting practices that are not tied to one employer.
+ * Where a claim comes from: a company in `experience.ts`, the LinkedIn summary for
+ * cross-cutting practices, or formal study (`education.ts`).
  */
-export type Evidence = CompanyId | 'summary';
+export type Evidence = CompanyId | 'summary' | 'education';
 
 export interface Company {
   id: CompanyId;
@@ -148,7 +150,8 @@ export interface Project {
   name: string;
   /** Company or client context, e.g. "Hostfully" or "CI&T for Invesco". */
   context: string;
-  period: Period;
+  /** Omitted when the work has no well-defined start (e.g. an evolving practice). */
+  period?: Period;
   summary: string;
   problem: string;
   approach: readonly string[];
@@ -173,6 +176,11 @@ export interface Education {
   field: string;
   period: Period;
   note?: string;
+  /** One or two sentences about the program. */
+  description?: string;
+  /** Curriculum highlights, shown as tags. */
+  topics?: readonly string[];
+  url?: string;
 }
 
 export interface Certification {

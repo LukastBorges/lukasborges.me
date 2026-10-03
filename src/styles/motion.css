@@ -1,0 +1,58 @@
+/*
+ * Motion system.
+ * - Reveal: elements with [data-reveal] fade/slide in once when scrolled into view.
+ *   Hidden states only apply when JS is running (html.js), so content is always reachable.
+ * - Entrance: [data-enter] elements animate on first paint (hero), staggered via --i.
+ * - Convention: every animation is declared inside `prefers-reduced-motion: no-preference`,
+ *   so reduced-motion users get the final state immediately — no global override needed.
+ */
+@layer utilities {
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0.75rem, 0);
+      filter: blur(6px);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-enter] {
+      animation: enter var(--duration-slow) var(--ease-out) both;
+      animation-delay: calc(var(--i, 0) * 70ms + 60ms);
+    }
+
+    html.js [data-reveal] {
+      opacity: 0;
+      transform: translate3d(0, 1.25rem, 0);
+      transition:
+        opacity var(--duration-slow) var(--ease-out),
+        transform var(--duration-slow) var(--ease-out);
+      transition-delay: calc(var(--i, 0) * 60ms);
+    }
+
+    html.js [data-reveal].is-visible {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Theme switch: circular reveal from the toggle (coordinates set in scripts/theme.ts). */
+  @keyframes theme-reveal {
+    from {
+      clip-path: circle(0 at var(--theme-x, 50%) var(--theme-y, 0));
+    }
+    to {
+      clip-path: circle(var(--theme-r, 150vmax) at var(--theme-x, 50%) var(--theme-y, 0));
+    }
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-new(root) {
+    animation: theme-reveal 560ms var(--ease-in-out);
+  }
+}

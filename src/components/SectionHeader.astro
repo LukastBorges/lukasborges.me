@@ -1,0 +1,64 @@
+---
+interface Props {
+  /** Section number shown in the eyebrow, e.g. 1 → "01". */
+  index: number;
+  label: string;
+  title: string;
+  /** id for aria-labelledby on the parent section. */
+  id: string;
+}
+
+const { index, label, title, id } = Astro.props;
+const number = String(index).padStart(2, '0');
+---
+
+<header class="section-header">
+  <p class="eyebrow section-header__eyebrow" data-reveal>
+    <span class="section-header__index">{number}</span>
+    <span class="section-header__rule" aria-hidden="true"></span>
+    <span>{label}</span>
+  </p>
+  <h2 id={id} class="section-header__title" data-reveal style="--i: 1">{title}</h2>
+  {Astro.slots.has('default') && (
+    <div class="section-header__lead" data-reveal style="--i: 2">
+      <slot />
+    </div>
+  )}
+</header>
+
+<style>
+  .section-header {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 48rem;
+    margin-bottom: clamp(var(--space-7), 6vw, var(--space-9));
+  }
+
+  .section-header__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .section-header__index {
+    color: var(--accent);
+  }
+
+  .section-header__rule {
+    width: 2rem;
+    height: 1px;
+    background: var(--border-strong);
+  }
+
+  .section-header__title {
+    font-size: var(--text-2xl);
+    letter-spacing: var(--tracking-tight);
+    font-weight: 600;
+  }
+
+  .section-header__lead {
+    color: var(--text-muted);
+    font-size: var(--text-md);
+    max-width: 40rem;
+  }
+</style>

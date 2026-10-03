@@ -1,0 +1,44 @@
+---
+interface Props {
+  tone?: 'default' | 'accent' | 'outline';
+  size?: 'sm' | 'md';
+}
+
+const { tone = 'default', size = 'sm' } = Astro.props;
+---
+
+<span class:list={['tag', `tag--${tone}`, `tag--${size}`]}><slot /></span>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    color: var(--text-muted);
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  .tag--sm {
+    padding: 0.125rem 0.625rem;
+    font-size: var(--text-xs);
+  }
+
+  .tag--md {
+    padding: 0.3125rem 0.875rem;
+    font-size: var(--text-sm);
+  }
+
+  .tag--accent {
+    border-color: transparent;
+    background: var(--accent-muted);
+    color: var(--accent-strong);
+  }
+
+  .tag--outline {
+    background: transparent;
+  }
+</style>

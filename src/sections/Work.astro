@@ -1,0 +1,267 @@
+---
+import Icon from '@/components/Icon.astro';
+import ProjectVisual from '@/components/ProjectVisual.astro';
+import SectionHeader from '@/components/SectionHeader.astro';
+import Tag from '@/components/Tag.astro';
+import { projects } from '@/data/projects';
+import { formatYearSpan } from '@/lib/dates';
+
+const featured = projects.filter((project) => project.featured);
+const more = projects.filter((project) => !project.featured);
+---
+
+<section class="section work" id="work" aria-labelledby="work-title">
+  <div class="container">
+    <SectionHeader
+      index={4}
+      label="Selected work"
+      id="work-title"
+      title="Case studies from the field."
+    >
+      <p>
+        Most of my work lives in private, production codebases, so these are told as engineering
+        stories rather than screenshots.
+      </p>
+    </SectionHeader>
+
+    <ol role="list" class="work__list">
+      {featured.map((project, i) => (
+        <li class:list={['project', { 'project--flip': i % 2 === 1 }]} data-reveal>
+          <article aria-labelledby={`${project.id}-title`}>
+            <div class="project__visual">
+              <ProjectVisual id={project.id} />
+            </div>
+            <div class="project__content">
+              <p class="project__context mono">
+                <span class="project__index">{String(i + 1).padStart(2, '0')}</span>
+                {project.context}
+                {project.period && ` · ${formatYearSpan(project.period)}`}
+              </p>
+              <h3 id={`${project.id}-title`} class="project__title">
+                {project.name}
+              </h3>
+              <p class="project__summary">{project.summary}</p>
+
+              <div class="project__details">
+                <div>
+                  <h4 class="eyebrow">Challenge</h4>
+                  <p>{project.problem}</p>
+                </div>
+                <div>
+                  <h4 class="eyebrow">Approach</h4>
+                  <ul class="project__approach">
+                    {project.approach.map((step) => (
+                      <li>{step}</li>
+                    ))}
+                  </ul>
+                </div>
+                {project.outcomes.length > 0 && (
+                  <div>
+                    <h4 class="eyebrow">Outcomes</h4>
+                    <ul class="project__approach">
+                      {project.outcomes.map((outcome) => (
+                        <li>{outcome}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              <ul role="list" class="project__tech" aria-label="Technologies">
+                {project.technologies.map((tech) => (
+                  <li>
+                    <Tag tone="outline">{tech}</Tag>
+                  </li>
+                ))}
+              </ul>
+
+              {(project.links.live || project.links.repository) && (
+                <p class="project__links">
+                  {project.links.live && (
+                    <a href={project.links.live}>
+                      Live <Icon name="arrow-up-right" size={14} />
+                    </a>
+                  )}
+                  {project.links.repository && (
+                    <a href={project.links.repository}>
+                      Source <Icon name="arrow-up-right" size={14} />
+                    </a>
+                  )}
+                </p>
+              )}
+            </div>
+          </article>
+        </li>
+      ))}
+    </ol>
+
+    {more.length > 0 && (
+      <div class="more" data-reveal>
+        <h3 class="eyebrow more__title">Also</h3>
+        <ul role="list" class="more__list">
+          {more.map((project) => (
+            <li class="more__item">
+              <div>
+                <p class="more__name">{project.name}</p>
+                <p class="more__summary">{project.summary}</p>
+              </div>
+              <p class="more__context mono">
+                {project.context}
+                {project.period && ` · ${formatYearSpan(project.period)}`}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .work__list {
+    display: grid;
+    gap: clamp(var(--space-8), 8vw, var(--space-9));
+  }
+
+  .project article {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .project__content {
+    display: grid;
+    align-content: start;
+    gap: var(--space-4);
+  }
+
+  .project__context {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--text-subtle);
+    font-size: var(--text-xs);
+    letter-spacing: 0.02em;
+  }
+
+  .project__index {
+    color: var(--accent);
+  }
+
+  .project__title {
+    font-size: var(--text-xl);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .project__summary {
+    color: var(--text-muted);
+    font-size: var(--text-md);
+  }
+
+  .project__details {
+    display: grid;
+    gap: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .project__details h4 {
+    margin-bottom: var(--space-2);
+  }
+
+  .project__approach {
+    display: grid;
+    gap: var(--space-2);
+    padding: 0;
+    list-style: none;
+  }
+
+  .project__approach li {
+    position: relative;
+    padding-left: var(--space-5);
+  }
+
+  .project__approach li::before {
+    content: '';
+    position: absolute;
+    top: 0.75em;
+    left: 0.25rem;
+    width: 0.5rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .project__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .project__links {
+    display: flex;
+    gap: var(--space-5);
+    font-size: var(--text-sm);
+  }
+
+  .project__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .more {
+    margin-top: var(--space-9);
+  }
+
+  .more__title {
+    margin-bottom: var(--space-4);
+  }
+
+  .more__item {
+    display: grid;
+    gap: var(--space-2);
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--border);
+  }
+
+  .more__item:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .more__name {
+    font-weight: 500;
+  }
+
+  .more__summary {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .more__context {
+    color: var(--text-subtle);
+    font-size: var(--text-xs);
+  }
+
+  @media (min-width: 60rem) {
+    .project article {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: var(--space-8);
+      align-items: center;
+    }
+
+    .project--flip .project__visual {
+      order: 2;
+    }
+
+    .project__details {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    }
+
+    .more__item {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: baseline;
+      gap: var(--space-6);
+    }
+  }
+</style>

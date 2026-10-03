@@ -16,7 +16,11 @@ export function getFacts(now: Date = new Date()): readonly Fact[] {
   return [
     { value: `${yearsSince(profile.careerStart, now)}+ years`, label: 'building for the web' },
     { value: `Since ${remoteSince}`, label: 'remote with US product teams' },
-    { value: profile.location.utcOffsetLabel, label: `${profile.location.city}, Brazil` },
+    {
+      value: profile.location.utcOffsetLabel,
+      label: `${profile.location.city}, Brazil`,
+      timeZone: profile.location.timeZone,
+    },
     { value: 'EN · PT', label: 'native / bilingual' },
   ];
 }

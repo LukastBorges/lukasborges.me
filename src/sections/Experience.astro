@@ -1,0 +1,364 @@
+---
+import SectionHeader from '@/components/SectionHeader.astro';
+import Tag from '@/components/Tag.astro';
+import { experience } from '@/data/experience';
+import { formatDuration, formatPeriod, formatYearSpan, monthsInPeriod } from '@/lib/dates';
+import type { Role } from '@/types/content';
+
+/** Roles shown expanded per company; older ones collapse under "Earlier roles". */
+const VISIBLE_ROLES = 2;
+
+const companies = experience.map((entry) => {
+  const oldest = entry.roles.at(-1);
+  const newest = entry.roles[0];
+  const tenure = {
+    start: oldest?.period.start ?? '2000-01',
+    ...(newest?.period.end && { end: newest.period.end }),
+  } as const;
+  return {
+    ...entry,
+    tenure,
+    tenureLabel: formatDuration(monthsInPeriod(tenure)),
+    visible: entry.roles.slice(0, VISIBLE_ROLES),
+    earlier: entry.roles.slice(VISIBLE_ROLES),
+    remote: entry.roles.some((role) => role.workMode === 'remote'),
+  };
+});
+
+const consultancy = companies.find((entry) => entry.company.id === 'cit');
+const consultancyYears = consultancy ? Math.floor(monthsInPeriod(consultancy.tenure) / 12) : 0;
+const remoteSince = Math.min(
+  ...companies
+    .filter((entry) => entry.remote)
+    .map((entry) => Number(entry.tenure.start.slice(0, 4))),
+);
+
+const roleMeta = (role: Role) =>
+  [
+    formatPeriod(role.period),
+    formatDuration(monthsInPeriod(role.period)),
+    role.workMode === 'remote' ? `Remote · ${role.location.country}` : role.location.city,
+  ].join('  ·  ');
+---
+
+<section class="section experience" id="experience" aria-labelledby="experience-title">
+  <div class="container">
+    <SectionHeader
+      index={2}
+      label="Experience"
+      id="experience-title"
+      title="Where I’ve done the work."
+    >
+      <p>
+        Remote with US product teams since {remoteSince}, and {consultancyYears}+ years at CI&T
+        before that, delivering for clients including Google and Invesco.
+      </p>
+    </SectionHeader>
+
+    <ol role="list" class="timeline">
+      {companies.map((company) => (
+        <li class="company" data-reveal>
+          <div class="company__aside">
+            <div class="company__sticky">
+              <h3 class="company__name">{company.company.name}</h3>
+              <p class="company__description">{company.company.description}</p>
+              <p class="company__tenure mono">
+                {formatYearSpan(company.tenure)} · {company.tenureLabel}
+              </p>
+              {company.remote && <Tag tone="accent">Remote</Tag>}
+            </div>
+          </div>
+
+          <ol role="list" class="roles">
+            {company.visible.map((role) => (
+              <li class="role">
+                <span
+                  class:list={['role__dot', { 'role__dot--current': !role.period.end }]}
+                  aria-hidden="true"
+                />
+                <h4 class="role__title">{role.title}</h4>
+                {role.client && <p class="role__client">Client: {role.client}</p>}
+                <p class="role__meta mono">{roleMeta(role)}</p>
+                <p class="role__summary">{role.summary}</p>
+                <ul class="role__highlights">
+                  {role.highlights.map((highlight) => (
+                    <li>{highlight}</li>
+                  ))}
+                </ul>
+                <ul role="list" class="role__tech" aria-label="Technologies">
+                  {role.technologies.map((tech) => (
+                    <li>
+                      <Tag tone="outline">{tech}</Tag>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+
+            {company.earlier.length > 0 && (
+              <li class="role role--earlier">
+                <span class="role__dot" aria-hidden="true" />
+                <details class="earlier">
+                  <summary class="earlier__summary">
+                    <span>
+                      {company.earlier.length} earlier{' '}
+                      {company.earlier.length === 1 ? 'role' : 'roles'}
+                    </span>
+                    <span class="mono earlier__span">
+                      {formatYearSpan({
+                        start: company.earlier.at(-1)?.period.start ?? '2000-01',
+                        ...(company.earlier[0]?.period.end && {
+                          end: company.earlier[0].period.end,
+                        }),
+                      })}
+                    </span>
+                  </summary>
+                  <ol role="list" class="earlier__list">
+                    {company.earlier.map((role) => (
+                      <li>
+                        <h4 class="role__title">{role.title}</h4>
+                        <p class="role__meta mono">{roleMeta(role)}</p>
+                        <p class="role__summary">{role.summary}</p>
+                        <ul class="role__highlights">
+                          {role.highlights.map((highlight) => (
+                            <li>{highlight}</li>
+                          ))}
+                        </ul>
+                        <ul role="list" class="role__tech" aria-label="Technologies">
+                          {role.technologies.map((tech) => (
+                            <li>
+                              <Tag tone="outline">{tech}</Tag>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
+                  </ol>
+                </details>
+              </li>
+            )}
+          </ol>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .timeline {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .company {
+    display: grid;
+    gap: var(--space-5);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border);
+  }
+
+  .company__sticky {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+  }
+
+  .company__name {
+    font-size: var(--text-xl);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .company__description {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    max-width: 22rem;
+  }
+
+  .company__tenure {
+    color: var(--text-subtle);
+    font-size: var(--text-xs);
+    margin-bottom: var(--space-1);
+  }
+
+  .roles {
+    --rail: 1.5rem;
+    position: relative;
+    display: grid;
+    gap: var(--space-7);
+    padding-left: var(--rail);
+  }
+
+  /* The rail */
+  .roles::before {
+    content: '';
+    position: absolute;
+    top: 0.6rem;
+    bottom: 0.6rem;
+    left: 0.25rem;
+    width: 1px;
+    background: linear-gradient(var(--border-strong), var(--border) 80%, transparent);
+  }
+
+  .role {
+    position: relative;
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .role__dot {
+    position: absolute;
+    top: 0.45rem;
+    left: calc(var(--rail) * -1);
+    width: 0.5625rem;
+    height: 0.5625rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 50%;
+    background: var(--bg);
+  }
+
+  .role__dot--current {
+    border-color: var(--accent);
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-muted);
+  }
+
+  .role__title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    letter-spacing: var(--tracking-snug);
+  }
+
+  .role__client {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    margin-top: calc(var(--space-2) * -1);
+  }
+
+  .role__meta {
+    color: var(--text-subtle);
+    font-size: var(--text-xs);
+    white-space: pre-wrap;
+  }
+
+  .role__summary {
+    color: var(--text);
+    max-width: 44rem;
+  }
+
+  .role__highlights {
+    display: grid;
+    gap: var(--space-2);
+    max-width: 44rem;
+    padding: 0;
+    color: var(--text-muted);
+    list-style: none;
+  }
+
+  .role__highlights li {
+    position: relative;
+    padding-left: var(--space-5);
+  }
+
+  .role__highlights li::before {
+    content: '';
+    position: absolute;
+    top: 0.75em;
+    left: 0.25rem;
+    width: 0.5rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .role__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+  }
+
+  .earlier {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+  }
+
+  .earlier__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 500;
+    list-style: none;
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .earlier__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .earlier__summary::after {
+    content: '+';
+    font-family: var(--font-mono);
+    color: var(--text-subtle);
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .earlier[open] .earlier__summary::after {
+    transform: rotate(45deg);
+  }
+
+  .earlier__summary:hover {
+    background: var(--surface-hover);
+  }
+
+  .earlier__span {
+    margin-left: auto;
+    color: var(--text-subtle);
+    font-size: var(--text-xs);
+  }
+
+  .earlier__list {
+    display: grid;
+    gap: var(--space-6);
+    padding: var(--space-2) var(--space-5) var(--space-5);
+  }
+
+  .earlier__list > li {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .earlier__list > li + li {
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .earlier::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition:
+        block-size var(--duration-base) var(--ease-out),
+        content-visibility var(--duration-base) allow-discrete;
+    }
+
+    .earlier[open]::details-content {
+      block-size: auto;
+    }
+  }
+
+  @media (min-width: 60rem) {
+    .company {
+      grid-template-columns: 18rem minmax(0, 1fr);
+      gap: var(--space-8);
+    }
+
+    .company__sticky {
+      position: sticky;
+      top: calc(var(--nav-height) + var(--space-6));
+    }
+  }
+</style>

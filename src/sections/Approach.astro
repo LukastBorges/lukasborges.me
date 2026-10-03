@@ -1,0 +1,81 @@
+---
+import SectionHeader from '@/components/SectionHeader.astro';
+import { principles } from '@/data/approach';
+import { experience } from '@/data/experience';
+import type { Evidence } from '@/types/content';
+
+const companyNames = new Map<Evidence, string>(
+  experience.map((entry) => [entry.company.id, entry.company.name]),
+);
+// "summary" evidence has no company to show, so it is omitted from the label.
+const evidenceLabel = (evidence: readonly Evidence[]) =>
+  evidence.flatMap((id) => companyNames.get(id) ?? []).join(' · ');
+---
+
+<section class="section approach" id="approach" aria-labelledby="approach-title">
+  <div class="container">
+    <SectionHeader index={6} label="Approach" id="approach-title" title="How I work." />
+
+    <ol role="list" class="principles">
+      {principles.map((principle, i) => {
+        const seenAt = evidenceLabel(principle.evidence);
+        return (
+          <li class="principle" data-reveal style={`--i: ${i % 3}`}>
+            <span class="principle__index mono">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="principle__title">{principle.title}</h3>
+            <p class="principle__body">{principle.body}</p>
+            {seenAt && <p class="principle__evidence mono">{seenAt}</p>}
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .principles {
+    display: grid;
+    border-top: 1px solid var(--border);
+  }
+
+  .principle {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: var(--space-3);
+    padding: var(--space-6) 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .principle__index {
+    color: var(--accent);
+    font-size: var(--text-xs);
+  }
+
+  .principle__title {
+    font-size: var(--text-lg);
+    letter-spacing: var(--tracking-snug);
+  }
+
+  .principle__body {
+    color: var(--text-muted);
+    max-width: 30rem;
+  }
+
+  .principle__evidence {
+    color: var(--text-subtle);
+    font-size: var(--text-xs);
+  }
+
+  @media (min-width: 48rem) {
+    .principles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-7);
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .principles {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

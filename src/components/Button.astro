@@ -1,0 +1,98 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import type { IconName } from '@/lib/icons';
+import Icon from './Icon.astro';
+
+interface Props extends HTMLAttributes<'a'> {
+  href: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  icon?: IconName;
+  iconPosition?: 'start' | 'end';
+}
+
+const {
+  href,
+  variant = 'primary',
+  icon,
+  iconPosition = 'end',
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<a href={href} class:list={['button', `button--${variant}`, className]} {...rest}>
+  {icon && iconPosition === 'start' && <Icon name={icon} size={16} />}
+  <span><slot /></span>
+  {icon && iconPosition === 'end' && <Icon name={icon} size={16} class="button__icon-end" />}
+</a>
+
+<style>
+  .button {
+    --button-bg: transparent;
+    --button-fg: var(--text);
+    --button-border: var(--border-strong);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 2.75rem;
+    padding: 0 var(--space-5);
+    border: 1px solid var(--button-border);
+    border-radius: var(--radius-full);
+    background: var(--button-bg);
+    color: var(--button-fg);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-base) var(--ease-out);
+  }
+
+  .button:active {
+    transform: scale(0.98);
+  }
+
+  .button--primary {
+    --button-bg: var(--text);
+    --button-fg: var(--bg);
+    --button-border: transparent;
+  }
+
+  .button--primary:hover {
+    box-shadow: 0 0 0 4px var(--accent-muted);
+  }
+
+  .button--secondary {
+    --button-bg: var(--surface);
+  }
+
+  .button--secondary:hover {
+    --button-bg: var(--surface-hover);
+    --button-border: var(--text-subtle);
+  }
+
+  .button--ghost {
+    --button-border: transparent;
+    --button-fg: var(--text-muted);
+    padding-inline: var(--space-3);
+  }
+
+  .button--ghost:hover {
+    --button-fg: var(--text);
+    --button-bg: var(--surface);
+  }
+
+  .button :global(.button__icon-end) {
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .button:hover :global(.button__icon-end) {
+    transform: translate3d(2px, 0, 0);
+  }
+</style>

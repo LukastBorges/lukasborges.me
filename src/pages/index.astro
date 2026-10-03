@@ -1,18 +1,34 @@
 ---
-import { Font } from 'astro:assets';
+import Footer from '@/components/Footer.astro';
+import Nav from '@/components/Nav.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import About from '@/sections/About.astro';
+import Approach from '@/sections/Approach.astro';
+import Contact from '@/sections/Contact.astro';
+import Education from '@/sections/Education.astro';
+import Experience from '@/sections/Experience.astro';
+import Expertise from '@/sections/Expertise.astro';
+import Hero from '@/sections/Hero.astro';
+import Work from '@/sections/Work.astro';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Lucas Borges — Senior Frontend Engineer</title>
-    <Font cssVariable="--font-sans" preload />
-  </head>
-  <body style="font-family: var(--font-sans)">
-    <main>
-      <h1>Lucas Borges</h1>
-    </main>
-  </body>
-</html>
+<BaseLayout>
+  <Nav />
+  <main id="main" tabindex="-1">
+    <Hero />
+    <About />
+    <Experience />
+    <Expertise />
+    <Work />
+    <Education />
+    <Approach />
+    <Contact />
+  </main>
+  <Footer />
+</BaseLayout>
+
+<script>
+  import { initReveal } from '@/scripts/reveal';
+
+  initReveal();
+</script>

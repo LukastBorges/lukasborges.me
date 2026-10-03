@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 4321;
+// Dedicated port so tests never collide with a running `astro dev` (4321).
+const PORT = 4329;
 const BASE_PATH = process.env.BASE_PATH ?? '/lukasborges.me';
 
 export default defineConfig({
@@ -18,7 +19,8 @@ export default defineConfig({
     { name: 'mobile', use: { ...devices['Pixel 7'] } },
   ],
   webServer: {
-    command: `pnpm preview --port ${PORT}`,
+    // --ignore-lock keeps preview in the foreground even if another preview server is running.
+    command: `pnpm exec astro preview --port ${PORT} --ignore-lock`,
     port: PORT,
     reuseExistingServer: !process.env.CI,
   },

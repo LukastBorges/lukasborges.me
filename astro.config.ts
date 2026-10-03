@@ -21,7 +21,8 @@ export default defineConfig({
   output: 'static',
   integrations: [sitemap()],
   build: {
-    inlineStylesheets: 'auto',
+    // ~8 KB gzipped for the whole site: inlining removes render-blocking requests.
+    inlineStylesheets: 'always',
   },
   // Self-hosted from the lockfile-pinned @fontsource packages: no network fetch at build time.
   fonts: [

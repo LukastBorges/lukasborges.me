@@ -1,0 +1,268 @@
+---
+import Icon from '@/components/Icon.astro';
+import { profile } from '@/data/profile';
+
+const links = profile.socials.filter((social) => social.id !== 'email');
+---
+
+<section class="section contact" id="contact" aria-labelledby="contact-title">
+  <div class="contact__glow" aria-hidden="true"></div>
+  <div class="container contact__inner">
+    <p class="eyebrow contact__eyebrow" data-reveal>
+      <span class="contact__index">07</span>
+      <span class="contact__rule" aria-hidden="true"></span>
+      <span>Contact</span>
+    </p>
+    <h2 id="contact-title" class="contact__title" data-reveal style="--i: 1">
+      Let’s build something great.
+    </h2>
+    <p class="contact__lead" data-reveal style="--i: 2">
+      Email is the fastest way to reach me. I’m also on LinkedIn and GitHub.
+    </p>
+
+    <div class="contact__email" data-reveal style="--i: 3">
+      <a class="contact__email-link" href={`mailto:${profile.email}`}>
+        {profile.email}
+        <Icon name="arrow-up-right" size={28} class="contact__email-icon" />
+      </a>
+      <button
+        type="button"
+        class="contact__copy"
+        data-copy={profile.email}
+        aria-describedby="copy-status"
+      >
+        <Icon name="copy" size={16} class="contact__copy-idle" />
+        <Icon name="check" size={16} class="contact__copy-done" />
+        <span data-copy-label>Copy email</span>
+      </button>
+      <span id="copy-status" class="visually-hidden" role="status" aria-live="polite"></span>
+    </div>
+
+    <ul role="list" class="contact__links" data-reveal style="--i: 4">
+      {links.map((link) => (
+        <li>
+          <a class="contact__link" href={link.href} rel="me">
+            <Icon name={link.id === 'github' ? 'github' : 'linkedin'} />
+            <span>
+              <span class="contact__link-label">{link.label}</span>
+              <span class="contact__link-handle mono">{link.handle}</span>
+            </span>
+            <Icon name="arrow-up-right" size={16} class="contact__link-arrow" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-copy]');
+  const label = button?.querySelector('[data-copy-label]');
+  const status = document.getElementById('copy-status');
+
+  if (button && label && navigator.clipboard) {
+    let timer = 0;
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? '');
+        button.dataset.copied = '';
+        label.textContent = 'Copied';
+        if (status) status.textContent = 'Email address copied to clipboard';
+        clearTimeout(timer);
+        timer = window.setTimeout(() => {
+          delete button.dataset.copied;
+          label.textContent = 'Copy email';
+          if (status) status.textContent = '';
+        }, 2000);
+      } catch {
+        if (status) status.textContent = 'Could not copy. Please select the address instead.';
+      }
+    });
+  } else if (button) {
+    // No Clipboard API: the mailto link remains; hide the button rather than show a dead control.
+    button.hidden = true;
+  }
+</script>
+
+<style>
+  .contact {
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+  }
+
+  .contact__glow {
+    position: absolute;
+    left: 50%;
+    bottom: -30rem;
+    width: 70rem;
+    height: 50rem;
+    translate: -50% 0;
+    background: radial-gradient(ellipse, var(--glow), transparent 65%);
+    pointer-events: none;
+  }
+
+  .contact__inner {
+    position: relative;
+    display: grid;
+    gap: var(--space-5);
+    justify-items: start;
+  }
+
+  .contact__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .contact__index {
+    color: var(--accent);
+  }
+
+  .contact__rule {
+    width: 2rem;
+    height: 1px;
+    background: var(--border-strong);
+  }
+
+  .contact__title {
+    max-width: 14ch;
+    font-size: var(--text-display);
+    line-height: 1.02;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .contact__lead {
+    color: var(--text-muted);
+    font-size: var(--text-md);
+  }
+
+  .contact__email {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+
+  .contact__email-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    letter-spacing: var(--tracking-snug);
+    text-decoration: none;
+    background: linear-gradient(var(--accent), var(--accent)) left bottom / 0 1px no-repeat;
+    transition: background-size var(--duration-base) var(--ease-out);
+    overflow-wrap: anywhere;
+  }
+
+  .contact__email-link:hover {
+    background-size: 100% 1px;
+  }
+
+  .contact__email-link :global(.contact__email-icon) {
+    color: var(--accent);
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .contact__email-link:hover :global(.contact__email-icon) {
+    transform: translate3d(3px, -3px, 0);
+  }
+
+  .contact__copy {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 2.5rem;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .contact__copy:hover {
+    color: var(--text);
+    border-color: var(--text-subtle);
+  }
+
+  .contact__copy :global(.contact__copy-done),
+  .contact__copy[data-copied] :global(.contact__copy-idle) {
+    display: none;
+  }
+
+  .contact__copy[data-copied] :global(.contact__copy-done) {
+    display: block;
+    color: var(--accent);
+  }
+
+  .contact__links {
+    display: grid;
+    width: 100%;
+    max-width: 40rem;
+    margin-top: var(--space-6);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (min-width: 60rem) {
+    .contact__inner {
+      grid-template-columns: minmax(0, 1fr) 24rem;
+      column-gap: var(--space-8);
+    }
+
+    .contact__inner > :not(.contact__links) {
+      grid-column: 1;
+    }
+
+    .contact__links {
+      grid-column: 2;
+      grid-row: 2 / span 3;
+      align-self: end;
+      margin-top: 0;
+    }
+  }
+
+  .contact__link {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-1);
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    text-decoration: none;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      padding var(--duration-base) var(--ease-out);
+  }
+
+  .contact__link:hover {
+    color: var(--text);
+    padding-left: var(--space-3);
+  }
+
+  .contact__link-label {
+    color: var(--text);
+    font-weight: 500;
+    margin-right: var(--space-3);
+  }
+
+  .contact__link-handle {
+    font-size: var(--text-xs);
+    color: var(--text-subtle);
+  }
+
+  .contact__link :global(.contact__link-arrow) {
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .contact__link:hover :global(.contact__link-arrow) {
+    transform: translate3d(2px, -2px, 0);
+    color: var(--accent);
+  }
+</style>
