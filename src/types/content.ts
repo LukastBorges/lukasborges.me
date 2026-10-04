@@ -51,8 +51,8 @@ export interface Fact {
 
 export interface Profile {
   name: string;
-  /** Short form used in the navigation mark. */
-  initials: string;
+  /** Name used professionally, shown in the site header and the browser tab title. */
+  professionalName: string;
   title: string;
   /** One-line positioning statement for the hero. */
   headline: string;

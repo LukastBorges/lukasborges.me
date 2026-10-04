@@ -1,14 +1,17 @@
 /**
  * Generates derived images:
- * - src/assets/avatar.png: circular crop of the brand logo (src/assets/brand/logo.png),
- *   optimized further at build time by astro:assets.
- * - public/og.png (1200×630) and public/apple-touch-icon.png (180×180).
+ * - src/assets/avatar.jpg: the profile photo, downloaded from Gravatar.
+ * - src/assets/logo-mark.png: circular crop of the brand logo (src/assets/brand/logo.png),
+ *   used as the nav logo. Both are optimized further at build time by astro:assets.
+ * - public/favicon.png (64×64) and public/apple-touch-icon.png (180×180), from the brand logo.
+ * - public/og.png (1200×630).
  *
- * Uses the same Geist fonts and palette as the site. Run after changing the logo or profile copy:
+ * Uses the same Geist fonts and palette as the site. Run after changing the logo, the Gravatar
+ * photo or profile copy:
  *
  *   pnpm images
  *
- * Requires Playwright's Chromium (`pnpm exec playwright install chromium`).
+ * Requires network access and Playwright's Chromium (`pnpm exec playwright install chromium`).
  */
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -21,18 +24,45 @@ const require = createRequire(import.meta.url);
 const publicDir = fileURLToPath(new URL('../public/', import.meta.url));
 const assetsDir = fileURLToPath(new URL('../src/assets/', import.meta.url));
 
-/* Avatar: the logo's badge is a circle centered at (510, 510) with a ~300px radius. */
-const AVATAR = { left: 210, top: 210, size: 600 };
+/* Avatar: resolved from the public Gravatar profile, so no email address lives in the repo. */
+const GRAVATAR_PROFILE = 'https://gravatar.com/lukastborges.json';
+const gravatar = (await (await fetch(GRAVATAR_PROFILE)).json()) as {
+  entry: { thumbnailUrl: string }[];
+};
+const photoUrl = gravatar.entry[0]?.thumbnailUrl;
+if (!photoUrl) throw new Error(`No Gravatar photo found at ${GRAVATAR_PROFILE}`);
+const photoResponse = await fetch(`${photoUrl}?s=800`);
+if (!photoResponse.ok) throw new Error(`Gravatar photo request failed: ${photoResponse.status}`);
+const avatar = await sharp(Buffer.from(await photoResponse.arrayBuffer()))
+  .resize(800, 800)
+  .jpeg({ quality: 88, mozjpeg: true })
+  .toBuffer();
+await sharp(avatar).toFile(`${assetsDir}avatar.jpg`);
+const avatarDataUri = `data:image/jpeg;base64,${avatar.toString('base64')}`;
+
+/* Logo: the badge is a circle centered at (623, 591) with a ~485px radius, on a navy field. */
+const logo = `${assetsDir}brand/logo.png`;
+const BADGE = { left: 138, top: 106, size: 970 };
 const circleMask = Buffer.from(
-  `<svg width="${AVATAR.size}" height="${AVATAR.size}"><circle cx="${AVATAR.size / 2}" cy="${AVATAR.size / 2}" r="${AVATAR.size / 2 - 1}" fill="#fff"/></svg>`,
+  `<svg width="${BADGE.size}" height="${BADGE.size}"><circle cx="${BADGE.size / 2}" cy="${BADGE.size / 2}" r="${BADGE.size / 2 - 1}" fill="#fff"/></svg>`,
 );
-const avatar = await sharp(`${assetsDir}brand/logo.png`)
-  .extract({ left: AVATAR.left, top: AVATAR.top, width: AVATAR.size, height: AVATAR.size })
+const badge = await sharp(logo)
+  .extract({ left: BADGE.left, top: BADGE.top, width: BADGE.size, height: BADGE.size })
   .composite([{ input: circleMask, blend: 'dest-in' }])
   .png()
   .toBuffer();
-await sharp(avatar).toFile(`${assetsDir}avatar.png`);
-const avatarDataUri = `data:image/png;base64,${avatar.toString('base64')}`;
+await sharp(badge).resize(256, 256).toFile(`${assetsDir}logo-mark.png`);
+await sharp(badge).resize(64, 64).toFile(`${publicDir}favicon.png`);
+/* Apple touch icons must be opaque: keep the logo's navy field around the badge. */
+await sharp(logo)
+  .extract({
+    left: BADGE.left - 80,
+    top: BADGE.top - 80,
+    width: BADGE.size + 160,
+    height: BADGE.size + 160,
+  })
+  .resize(180, 180)
+  .toFile(`${publicDir}apple-touch-icon.png`);
 
 function fontFace(family: string, pkg: string, file: string) {
   const path = require.resolve(`${pkg}/files/${file}`);
@@ -73,13 +103,6 @@ const ogHtml = `<!doctype html><html><head><style>
   <div class="meta"><span><b>●</b> ${profile.location.city}, ${profile.location.country}</span><span>·</span><span>React · TypeScript · AI agents</span></div>
 </div></body></html>`;
 
-const iconHtml = `<!doctype html><html><head><style>
-  ${base}
-  .icon { width: 180px; height: 180px; display: grid; place-items: center; position: relative; background: #121317; }
-  .icon span { font: 600 64px 'Geist Mono'; letter-spacing: -0.02em; }
-  .icon i { position: absolute; top: 34px; right: 34px; width: 16px; height: 16px; border-radius: 50%; background: #f5b97a; }
-</style></head><body><div class="icon"><span>${profile.initials}</span><i></i></div></body></html>`;
-
 const browser = await chromium.launch();
 const page = await browser.newPage({ deviceScaleFactor: 1 });
 
@@ -88,10 +111,7 @@ await page.setContent(ogHtml);
 await page.evaluate(() => document.fonts.ready);
 await page.locator('.og').screenshot({ path: `${publicDir}og.png` });
 
-await page.setViewportSize({ width: 180, height: 180 });
-await page.setContent(iconHtml);
-await page.evaluate(() => document.fonts.ready);
-await page.locator('.icon').screenshot({ path: `${publicDir}apple-touch-icon.png` });
-
 await browser.close();
-console.log('Wrote src/assets/avatar.png, public/og.png and public/apple-touch-icon.png');
+console.log(
+  'Wrote src/assets/avatar.jpg, src/assets/logo-mark.png, public/favicon.png, public/apple-touch-icon.png and public/og.png',
+);

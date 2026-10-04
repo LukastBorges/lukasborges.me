@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import avatar from '@/assets/avatar.png';
+import avatar from '@/assets/avatar.jpg';
 import SectionHeader from '@/components/SectionHeader.astro';
 import { profile } from '@/data/profile';
 import { yearsSince } from '@/lib/dates';
@@ -37,7 +37,7 @@ const [lead, ...paragraphs] = profile.summary;
           <div class="about__identity">
             <Image
               src={avatar}
-              alt={`Illustrated avatar of ${profile.name}`}
+              alt={`Photo of ${profile.name}`}
               width={64}
               height={64}
               densities={[1, 2]}

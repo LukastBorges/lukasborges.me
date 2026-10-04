@@ -1,6 +1,6 @@
 ---
 import { Font, getImage } from 'astro:assets';
-import avatar from '@/assets/avatar.png';
+import avatar from '@/assets/avatar.jpg';
 import { profile } from '@/data/profile';
 import { seo } from '@/data/site';
 import { profilePageSchema } from '@/lib/structured-data';
@@ -61,7 +61,7 @@ const jsonLd = JSON.stringify(profilePageSchema(canonical, profileImageUrl)).rep
     <meta name="theme-color" content="#121317" />
     <meta name="color-scheme" content="dark light" />
 
-    <link rel="icon" href={withBase('favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={withBase('favicon.png')} type="image/png" />
     <link rel="apple-touch-icon" href={withBase('apple-touch-icon.png')} />
     <link rel="sitemap" href={withBase('sitemap-index.xml')} />
 

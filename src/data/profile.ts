@@ -6,8 +6,8 @@ const EMAIL = 'lucas@lukasborges.me';
 
 export const profile: Profile = {
   name: 'Lucas Borges',
-  initials: 'LB',
-  title: 'Senior Frontend Engineer',
+  professionalName: 'Lukas Borges',
+  title: 'Frontend Engineer',
   headline:
     'I modernize product frontends — the architecture, the quality systems around it, and the interfaces people actually use.',
   intro:

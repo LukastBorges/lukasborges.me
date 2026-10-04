@@ -44,7 +44,7 @@ pnpm dev        # http://localhost:4321/
 | `pnpm check`      | Astro and TypeScript type check                           |
 | `pnpm test`       | Unit tests (dates, data integrity, privacy guards)        |
 | `pnpm test:e2e`   | Playwright tests on desktop and mobile, including axe     |
-| `pnpm images`     | Regenerate the avatar, `public/og.png` and `public/apple-touch-icon.png` |
+| `pnpm images`     | Regenerate the avatar, logo mark, favicons and `public/og.png` |
 | `pnpm validate`   | Lint, type check, unit tests and build in one go          |
 
 The first time you run end-to-end tests, install Chromium with `pnpm exec playwright install chromium`.
@@ -56,7 +56,7 @@ src/
   types/content.ts   Typed content models (Profile, Experience, Skill, Project, …)
   data/              All professional content. Edit here, not in components.
   lib/               Date math, URL helpers, JSON-LD
-  assets/            Brand logo (source) and the derived avatar
+  assets/            Brand logo (source), derived logo mark and avatar
   components/        Reusable UI (Nav, Button, Tag, Icon, ProjectVisual, …)
   sections/          Page sections (Hero, About, Experience, …)
   scripts/           Client-side behavior (nav, theme, reveal, hero graph)
@@ -84,9 +84,12 @@ is nothing to update by hand. A monthly scheduled build keeps them current.
 `pnpm test` fails if content breaks an invariant. Examples: a skill without evidence, inverted dates,
 or a phone number or unapproved email address in the data.
 
-The profile picture comes from `src/assets/brand/logo.png`. `pnpm images` crops it into
-`src/assets/avatar.png`, which `astro:assets` then optimizes to WebP. Run `pnpm images` after
-changing the logo, name, title or headline to refresh the avatar and the social preview image.
+The profile picture is the Gravatar photo of the `lukastborges` profile. `pnpm images` downloads it
+into `src/assets/avatar.jpg`. It also crops the badge out of `src/assets/brand/logo.png` into the nav
+logo (`src/assets/logo-mark.png`), `public/favicon.png` and `public/apple-touch-icon.png`.
+`astro:assets` optimizes the avatar and logo mark to WebP at build time. Run `pnpm images` after
+changing the Gravatar photo, the logo, name, title or headline to refresh these and the social
+preview image.
 
 ## Deployment
 

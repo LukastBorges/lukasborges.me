@@ -25,7 +25,7 @@ test.describe('page', () => {
     page.on('pageerror', (error) => errors.push(error.message));
 
     await page.goto('./');
-    await expect(page).toHaveTitle(/Lucas Borges/);
+    await expect(page).toHaveTitle(/Lukas Borges/);
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Lucas Borges');
     for (const id of SECTIONS) await expect(page.locator(`#${id}`)).toBeAttached();
     expect(errors).toEqual([]);
