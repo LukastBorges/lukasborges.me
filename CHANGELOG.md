@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/LukastBorges/lukasborges.me/compare/v1.0.0...v1.1.0) (2026-10-04)
+
+### Features
+
+* :sparkles: use gravatar photo, new brand logo and professional name ([c1208ba](https://github.com/LukastBorges/lukasborges.me/commit/c1208bac8cca403f6a685bc48d2a831231c8923b))
+
 ## 1.0.0 (2026-10-03)
 
 ### Features
